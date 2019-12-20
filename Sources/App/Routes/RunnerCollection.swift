@@ -17,23 +17,35 @@ import Vapor
 **/
 final class RunnerCollection: RouteCollection {
     func boot(router: Router) throws {
-        let runner = router.grouped("runner")
+        let runnerGroup = router.grouped("runner")
         
-        runner.get ("all") { req -> String in
-            return "All runners"
+        runnerGroup.get ("all") { req -> Future<[Runner]> in
+            let runner = Runner(id: nil)
+            return Future.map(on: req) {
+                return [runner]
+            }
         }
         
-        runner.get (Int.parameter) { req -> String in
+        runnerGroup.get (Int.parameter) { req -> String in
             let bib = try req.parameters.next(Int.self)
             return "Runner: \(bib)"
         }
         
-        runner.post(Int.parameter, "in") { req -> String in
+        
+        runnerGroup.post(Runner.self, at: "create") { req, runner -> Future<Runner> in
+            
+            return runner.save(on: req)
+        }
+        
+        
+        
+        
+        runnerGroup.post(Int.parameter, "in") { req -> String in
             let bib = try req.parameters.next(Int.self)
             return "Runner: \(bib) - IN"
         }
         
-        runner.post(Int.parameter, "out") { req -> String in
+        runnerGroup.post(Int.parameter, "out") { req -> String in
             let bib = try req.parameters.next(Int.self)
             return "Runner: \(bib) - OUT"
         }
