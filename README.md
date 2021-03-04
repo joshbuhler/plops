@@ -13,3 +13,4 @@ A Vapor-powered application for runner operations at Pole-Line Pass for the Wasa
 
 ## Notes
 * https://medium.com/@jhheider/installing-vapor-and-swift-on-the-raspberry-pi-45a6c7baef35
+* https://github.crookster.org/vapor-4-on-raspberry-pi-4-with-aarch64-swift-5.2/
