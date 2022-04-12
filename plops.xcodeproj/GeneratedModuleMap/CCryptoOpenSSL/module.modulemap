@@ -1,4 +1,0 @@
-module CCryptoOpenSSL {
-    umbrella "/Users/joshuabuhler/Projects/_jb/plops/.build/checkouts/crypto/Sources/CCryptoOpenSSL/include"
-    export *
-}
