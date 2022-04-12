@@ -24,7 +24,7 @@ final class Runner: Model, Content {
     var lastName:String
     
     @Field(key: "gender")
-    var gender:Gender
+    var gender:String?
     
     @Field(key: "age")
     var age:Int?
@@ -44,7 +44,7 @@ final class Runner: Model, Content {
          bib:Int,
          firstName:String,
          lastName:String,
-         gender:Gender = .unknown,
+         gender:String?,
          age:Int?,
          city:String?,
          state:String?,

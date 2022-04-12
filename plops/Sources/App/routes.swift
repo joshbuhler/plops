@@ -27,6 +27,24 @@ func routes(_ app: Application) throws {
         return "Info about a runner's last location with bib: \(bib)"
     }
     
-
+    runners.post("create") { req -> HTTPStatus in
+        // a JSON object describing the runner to add to the system
+        let runner = try req.content.decode(Runner.self)
+        print ("Creating runner: \(runner)")
+        return HTTPStatus.ok
+    }
+    
+    runners.delete(":bib") { req -> HTTPStatus in
+        let bib = req.parameters.get("bib")
+        print ("Deleting runner for bib: \(bib)")
+        
+        // TODO: should return some sort of error if the delete fails
+        return HTTPStatus.ok
+    }
+    
+    runners.get("dnf", "all") { req -> String in
+        return "A list of all runners that DNF"
+    }
+    
     try app.register(collection: TodoController())
 }
