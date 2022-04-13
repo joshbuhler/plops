@@ -17,14 +17,14 @@ final class Checkpoint: Model, Content {
     @Field(key: "name")
     var name: String
     
-    @Field(key: "code")
-    var code: String
+    @Field(key: "callsign")
+    var callsign: String
 
     init() { }
 
-    init(id: UUID? = nil, name: String, code:String) {
+    init(id: UUID? = nil, name: String, callsign:String) {
         self.id = id
         self.name = name
-        self.code = code
+        self.callsign = callsign
     }
 }

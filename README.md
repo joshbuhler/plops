@@ -67,14 +67,15 @@ Initially, this will only return info about runners in the vapor side. Once we c
 	- POST
 	- A JSON obj describing a runner to add to the system
 
-/runner/delete/<bib>
+/runner/<bib>
 	- DELETE
 	- A bib number of a runner to remove to the system
 
 /runner/dnf
 	- POST
 	- A JSON obj describing a runner to flag as a DNF and when
-		- { runner:Runner, time:1234 }
+		- { runner:Runner, time:1234, reason, where, how }
+		- http://www.ke7bme.com/?page_id=14
 
 /runner/dnf/all
 	- GET
@@ -108,12 +109,12 @@ Initially, this will only return info about runners in the vapor side. Once we c
 /checkpoint/<id>/checkin/
 	- POST
 	- A JSON obj describing which runner to checkin and when
-		- { runner:Runner, time:1234 }
+		- { bib:123, time:1234 }
 
 /checkpoint/<id>/checkout/
 	- POST
 	- A JSON obj describing which runner to checkout and when
-		- { runner:Runner, time:1234 }
+		- { bib:123, time:1234 }
 
 /temp
 	- GET
