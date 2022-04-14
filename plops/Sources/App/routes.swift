@@ -55,8 +55,9 @@ func routes(_ app: Application) throws {
     
     let checkpoints = app.grouped("checkpoints")
     
-    checkpoints.get("all") { req -> String in
-        return "A list of all checkpoints"
+    checkpoints.get("all") { req -> [Checkpoint] in
+        let points = try await Checkpoint.query(on: req.db).all()
+        return points
     }
     
     checkpoints.get(":callsign") { req -> String in
