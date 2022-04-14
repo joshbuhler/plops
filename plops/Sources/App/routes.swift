@@ -16,8 +16,9 @@ func routes(_ app: Application) throws {
     let runners = app.grouped("runners")
     
     // TODO: should this just be "/runners/" ?
-    runners.get("all") { req -> String in
-        return "A list of all runners in the system"
+    runners.get("all") { req -> [Runner] in
+        let runners = try await Runner.query(on: req.db).all()
+        return runners
     }
     
     runners.get(":bib") { req -> String in
