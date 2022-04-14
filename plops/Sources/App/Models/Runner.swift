@@ -5,17 +5,17 @@
 //  Created by Joshua Buhler on 4/11/22.
 //
 
-import Fluent
 import Vapor
+import Fluent
 
 final class Runner: Model, Content {
-    static let schema = "runner"
+    static let schema = "runners"
     
     @ID(key: .id)
     var id:UUID?
 
     @Field(key: "bib")
-    var bib:Int
+    var bib:String
     
     @Field(key: "firstName")
     var firstName:String
@@ -41,7 +41,7 @@ final class Runner: Model, Content {
     init() { }
 
     init(id: UUID? = nil,
-         bib:Int,
+         bib:String,
          firstName:String,
          lastName:String,
          gender:String?,
