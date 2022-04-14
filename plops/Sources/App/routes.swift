@@ -21,9 +21,19 @@ func routes(_ app: Application) throws {
         return runners
     }
     
-    runners.get(":bib") { req -> String in
-        let bib = req.parameters.get("bib") ?? "NOT FOUND"
-        return "Info about runner with bib: \(bib)"
+    runners.get(":bib") { req -> Runner in
+        guard let bib = req.parameters.get("bib") else {
+            req.logger.info("bib param missing")
+            throw Abort(.badRequest)
+        }
+        
+        guard let runner = try await Runner.query(on: req.db)
+            .filter(\.$bib == bib)
+            .first() else {
+            throw Abort(.notFound)
+        }
+        
+        return runner
     }
     
     runners.get(":bib", "lastlocation") { req -> String in
