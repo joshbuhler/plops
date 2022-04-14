@@ -36,6 +36,8 @@ func routes(_ app: Application) throws {
         return runner
     }
     
+    // TODO: need a method to fetch runner by name
+    
     runners.get(":bib", "lastlocation") { req -> String in
         let bib = req.parameters.get("bib") ?? "NOT FOUND"
         return "Info about a runner's last location with bib: \(bib)"
