@@ -9,7 +9,7 @@ import Fluent
 import Vapor
 
 final class Checkpoint: Model, Content {
-    static let schema = "checkpoint"
+    static let schema = "checkpoints"
     
     @ID(key: .id)
     var id: UUID?
@@ -28,3 +28,5 @@ final class Checkpoint: Model, Content {
         self.callsign = callsign
     }
 }
+
+
