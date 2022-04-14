@@ -16,6 +16,7 @@ public func configure(_ app: Application) throws {
     ), as: .psql)
 
     app.migrations.add(CreateCheckpoints())
+    app.migrations.add(CreateRunners())
     
     
     try app.autoMigrate().wait()
