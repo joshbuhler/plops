@@ -21,6 +21,7 @@ struct CreateRunners: AsyncMigration {
             .field("city", .string)
             .field("state", .string)
             .field("country", .string)
+            .field("events", .uuid)
             .create()
                 
         let dirConfig = DirectoryConfiguration.detect()

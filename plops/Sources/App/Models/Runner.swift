@@ -37,6 +37,9 @@ final class Runner: Model, Content {
     
     @Field(key: "country")
     var country:String?
+    
+    @Children(for: \.$runner)
+    var events:[RunnerEvent]
 
     init() { }
 
