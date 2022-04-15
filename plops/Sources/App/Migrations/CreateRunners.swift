@@ -74,7 +74,7 @@ struct CreateRunners: AsyncMigration {
     }
 
     func revert(on database: Database) async throws {
-        try await database.schema(Checkpoint.schema).delete()
+        try await database.schema(Runner.schema).delete()
     }
 }
 
