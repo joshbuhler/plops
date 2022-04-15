@@ -15,6 +15,7 @@ struct CreateCheckpoints: AsyncMigration {
             .field("callsign", .string, .required)
             .create()
         
+        // TODO: Move to a CSV file
         try await Checkpoint(name:"Start", callsign:"A").create(on: database)
         try await Checkpoint(name:"Bountiful \"B\"", callsign:"B").create(on: database)
         try await Checkpoint(name:"Sessions Lift Off", callsign:"C").create(on: database)
