@@ -142,28 +142,10 @@ func routes(_ app: Application) throws {
     let runevents = app.grouped("runevents")
     
     runevents.get("all") { req -> [RunnerEvent] in
-        let events = try await RunnerEvent.query(on: req.db).all()
-        return events
-    }
-    
-    runevents.get("all") { req -> [RunnerEvent] in
-        let events = try await RunnerEvent.query(on: req.db).all()
-        
-//        let response = events.map { event -> RunnerPostModel in
-//
-//            let runner = try await Runner.query(on: req.db)
-//                .filter(\.$id == event.runner.id!)
-//                .first()
-//
-//            let checkpoint = try await Checkpoint.query(on: req.db)
-//                .filter(\.$id == event.checkpoint.id!)
-//                .first()
-//
-//            return RunnerPostModel(bib: runner.,
-//                                   time: event.time,
-//                                   eventType: event.eventType)
-//        }
-        
+        let events = try await RunnerEvent.query(on: req.db)
+            .with(\.$runner)
+            .with(\.$checkpoint)
+            .all()
         return events
     }
     
