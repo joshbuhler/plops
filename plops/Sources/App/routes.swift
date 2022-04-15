@@ -36,6 +36,23 @@ func routes(_ app: Application) throws {
         return runner
     }
     
+    runners.get(":bib", "events") { req -> [RunnerEvent] in
+        
+        guard let bib = req.parameters.get("bib") else {
+            throw Abort(.badRequest)
+        }
+        
+        let events = try await RunnerEvent.query(on: req.db)
+            .with(\.$runner)
+            .with(\.$checkpoint)
+            .all()
+            .filter({ event in
+                event.runner.bib == bib
+            })
+        
+        return events
+    }
+    
     // TODO: need a method to fetch runner by name
     
     runners.get(":bib", "lastlocation") { req -> String in
