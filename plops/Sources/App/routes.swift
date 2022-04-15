@@ -132,12 +132,19 @@ func routes(_ app: Application) throws {
                               eventType: eventJSON.eventType)
         .create(on: req.db)
         
-        // TODO: create inTime
-        // TODO: create outTime
+        // TODO: update events as needed if the times match
         
         return HTTPStatus.ok
     }
     
+    // MARK: Runner Events
+    
+    let runevents = app.grouped("runevents")
+    
+    runevents.get("all") { req -> [RunnerEvent] in
+        let events = try await RunnerEvent.query(on: req.db).all()
+        return events
+    }
     
 //    try app.register(collection: TodoController())
 }
