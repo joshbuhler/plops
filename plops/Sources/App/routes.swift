@@ -73,9 +73,17 @@ func routes(_ app: Application) throws {
         return points
     }
     
-    checkpoints.get(":callsign") { req -> String in
-        let call = req.parameters.get("callsign") ?? "NOT FOUND"
-        return "Info about checkpoint with callsign: \(call)"
+    checkpoints.get(":callsign") { req -> Checkpoint in
+        guard let callsign = req.parameters.get("callsign") else {
+            throw Abort(.badRequest)
+        }
+        
+        guard let checkpoint = try await Checkpoint.query(on: req.db)
+            .filter(\.$callsign, .custom("ilike"), callsign)
+            .first() else {
+            throw Abort(.notFound)
+        }
+        return checkpoint
     }
     
     checkpoints.get(":callsign", "runners") { req -> String in
