@@ -17,6 +17,7 @@ public func configure(_ app: Application) throws {
 
     app.migrations.add(CreateCheckpoints())
     app.migrations.add(CreateRunners())
+    app.migrations.add(CreateRunnerEvents())
     
     
     try app.autoMigrate().wait()

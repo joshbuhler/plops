@@ -108,6 +108,33 @@ func routes(_ app: Application) throws {
 //            print ("🚀 Runner FLYBY: \(runnerEvent)")
 //        }
         
+        guard let callsign = req.parameters.get("callsign") else {
+            throw Abort(.badRequest)
+        }
+        
+        let eventJSON = try req.content.decode(RunnerPostModel.self)
+        
+        req.logger.info("EventJSON: \(eventJSON)")
+        
+        guard let runner = try await Runner.query(on: req.db)
+            .filter(\.$bib == eventJSON.bib).first() else {
+            throw Abort(.notFound)
+        }
+        
+        guard let checkpoint = try await Checkpoint.query(on: req.db)
+            .filter(\.$callsign, .custom("ilike"), callsign).first() else {
+            throw Abort(.notFound)
+        }
+        
+        try await RunnerEvent(runnerID: runner.requireID(),
+                              checkpointID: checkpoint.requireID(),
+                              time: eventJSON.time,
+                              eventType: eventJSON.eventType)
+        .create(on: req.db)
+        
+        // TODO: create inTime
+        // TODO: create outTime
+        
         return HTTPStatus.ok
     }
     
