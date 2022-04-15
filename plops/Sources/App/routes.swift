@@ -97,16 +97,6 @@ func routes(_ app: Application) throws {
     }
     
     checkpoints.post(":callsign", "runevent") { req -> HTTPStatus in
-//        let runnerEvent = try req.content.decode(RunnerEvent.self)
-//
-//        switch runnerEvent.eventType {
-//        case .checkIn:
-//            print ("☕️ Runner checking IN: \(runnerEvent)")
-//        case .checkOut:
-//            print ("🛫 Runner checking OUT: \(runnerEvent)")
-//        case .flyby:
-//            print ("🚀 Runner FLYBY: \(runnerEvent)")
-//        }
         
         guard let callsign = req.parameters.get("callsign") else {
             throw Abort(.badRequest)
@@ -126,15 +116,30 @@ func routes(_ app: Application) throws {
             throw Abort(.notFound)
         }
         
+        // Simplistic, but this is a simple event for now
+        if let _ = try await RunnerEvent.query(on: req.db)
+            .with(\.$runner)
+            .group(.and, { group in
+                group.filter(\.$time == eventJSON.time)
+                    .filter(\.$runner.$id == runner.id!)
+                    .filter(\.$eventType == eventJSON.eventType)
+            })
+                .first()
+        {
+            req.logger.info("Found existing event - ignoring")
+            
+            // We have an event based on the time, so ignore it. Eventually we can audit these, but we're keeping it simple for now.
+            
+            return HTTPStatus.ok
+        }
+        
         try await RunnerEvent(runnerID: runner.requireID(),
                               checkpointID: checkpoint.requireID(),
                               time: eventJSON.time,
                               eventType: eventJSON.eventType)
         .create(on: req.db)
         
-        // TODO: update events as needed if the times match
-        
-        return HTTPStatus.ok
+        return HTTPStatus.created
     }
     
     // MARK: Runner Events
