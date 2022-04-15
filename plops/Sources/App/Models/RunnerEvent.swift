@@ -19,6 +19,7 @@ struct RunnerPostModel: Content {
     var bib:String
     var time:String
     var eventType:String
+    var checkpoint:String?
     
     init(bib:String, time:String, eventType:String) {
         self.bib = bib
