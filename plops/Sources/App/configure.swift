@@ -19,7 +19,8 @@ public func configure(_ app: Application) throws {
     app.migrations.add(CreateRunners())
     app.migrations.add(CreateRunnerEvents())
     
-    
+    // ⚠️ this is just to reset the db for testing/dev work. Remove it. ⚠️
+    try app.autoRevert().wait()
     try app.autoMigrate().wait()
 
     // register routes
