@@ -11,6 +11,11 @@ guard let fileMon = try? FileMonitor(url: logURL) else {
     exit(-1)
 }
 
+
+var logParser = LogParser()
+fileMon.delegate = logParser
+
+
 RunLoop.current.run()
 
 print ("The Force was with us.")

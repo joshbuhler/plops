@@ -33,16 +33,20 @@ public class LogParser:LogParserProtocol {
                 return
             }
             if (match.numberOfRanges > 0) {
-                print ("numberOfRanges: \(match.numberOfRanges)")
                 if let foundRange = Range(match.range(at:0), in: newLogs) {
-                    print ("foundRange: \(foundRange.lowerBound)..<\(foundRange.upperBound)")
                     let matchText = newLogs[foundRange]
-                    print ("✅ match: \(matchText)")
+                    print ("✅ \(matchText)")
                     returnString = String(matchText)
                 }
             }
         }
         
         return returnString
+    }
+}
+
+extension LogParser: FileMonitorDelegate {
+    func didReceive(changes: String) {
+        try? self.findIncomingRunners(newLogs: changes)
     }
 }
