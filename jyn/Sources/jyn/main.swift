@@ -11,4 +11,6 @@ guard let fileMon = try? FileMonitor(url: logURL) else {
     exit(-1)
 }
 
+RunLoop.current.run()
+
 print ("The Force was with us.")
