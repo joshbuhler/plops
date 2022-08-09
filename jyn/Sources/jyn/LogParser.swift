@@ -22,7 +22,7 @@ public class LogParser:LogParserProtocol {
         
         let pattern = #"""
         (?<header>(>Next 10 runners inbound to .* as of \d{1,4} hours))
-        (?<runner>(^\d{1,4}(.+ ){1,3}Projected in at \d{1,4} hours\n)){0,10}
+        (?<runner>(^\d{1,4}(.+ ){1,3}Projected in at \d{1,4} hours\n?)){0,10}
         """#
         let regex = try NSRegularExpression(pattern: pattern, options: [.anchorsMatchLines])
         //let range = NSRange(0..<logOutput.count)

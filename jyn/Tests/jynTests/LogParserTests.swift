@@ -20,6 +20,8 @@ class LogParserTests: XCTestCase {
     
     func test_findIncomingRunners() throws {
         let sample = """
+>#312,   OK @ 2301MDT
+
 >Next 10 runners inbound to  Pole Line Pass as of 2304 hours
 209 Brian Culmo Projected in at 2302 hours
 175 Andy Lefriec Projected in at 2310 hours
@@ -30,6 +32,8 @@ class LogParserTests: XCTestCase {
 322 Jonathan Crawley Projected in at 2339 hours
 264 Neil Campbell Projected in at 2341 hours
 285 Jay Aldous Projected in at 2353 hours
+
+>#175,   OK @ 2304MDT
 """
         let expected = """
 >Next 10 runners inbound to  Pole Line Pass as of 2304 hours
@@ -42,19 +46,20 @@ class LogParserTests: XCTestCase {
 322 Jonathan Crawley Projected in at 2339 hours
 264 Neil Campbell Projected in at 2341 hours
 285 Jay Aldous Projected in at 2353 hours
+
 """
-        
+        // NEED TO ACCOUNT FOR LINE BREAKS
         let parser = LogParser()
         let actualString = try? XCTUnwrap(parser.findIncomingRunners(newLogs: sample))
         
         XCTAssertEqual(actualString, expected)
     }
     
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
+//    func testPerformanceExample() throws {
+//        // This is an example of a performance test case.
+//        self.measure {
+//            // Put the code you want to measure the time of here.
+//        }
+//    }
     
 }
