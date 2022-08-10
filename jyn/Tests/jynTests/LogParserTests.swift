@@ -35,24 +35,26 @@ class LogParserTests: XCTestCase {
 
 >#175,   OK @ 2304MDT
 """
-        let expected = """
->Next 10 runners inbound to  Pole Line Pass as of 2304 hours
-209 Brian Culmo Projected in at 2302 hours
-175 Andy Lefriec Projected in at 2310 hours
-321 Grant Barnette Projected in at 2324 hours
-143 Jessi Morton-Langehaug Projected in at 2326 hours
-335 Nathan Williams Projected in at 2329 hours
-281 Tyler Waterhouse Projected in at 2339 hours
-322 Jonathan Crawley Projected in at 2339 hours
-264 Neil Campbell Projected in at 2341 hours
-285 Jay Aldous Projected in at 2353 hours
-
-"""
-        // NEED TO ACCOUNT FOR LINE BREAKS
         let parser = LogParser()
-        let actualString = try? XCTUnwrap(parser.findIncomingRunners(newLogs: sample))
+        let actualRunners:[IncomingRunner] = try XCTUnwrap(parser.findIncomingRunners(newLogs: sample))
+        XCTAssertEqual(actualRunners.count, 9)
         
-        XCTAssertEqual(actualString, expected)
+        let _ = actualRunners.map { temp in
+            print ("Runner: \(temp)")
+        }
+        
+        guard actualRunners.count >= 9 else {
+            XCTFail()
+            return
+        }
+        
+        let poleLine_expected = IncomingRunner(station: "Pole Line Pass",
+                                               updateTime: "2304",
+                                               bib: 285,
+                                               name: "Jay Aldous",
+                                               projectedTime: "2353")
+        let poleLine_actual = actualRunners[8]
+        XCTAssertEqual(poleLine_actual, poleLine_expected)
     }
     
     func test_findReportedTemps() throws {

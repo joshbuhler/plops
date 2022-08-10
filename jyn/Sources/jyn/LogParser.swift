@@ -8,7 +8,7 @@
 import Foundation
 
 public protocol LogParserProtocol {
-    func findIncomingRunners (newLogs:String) throws -> String?
+    func findIncomingRunners (newLogs:String) -> [IncomingRunner]?
     func findReportedTemps (newLogs:String) -> [Temperature]?
 }
 
@@ -17,16 +17,52 @@ public class LogParser:LogParserProtocol {
     /// Finds incoming runners.
     /// - Parameter newLogs: The string to parse for incoming runner info.
     @discardableResult
-    public func findIncomingRunners (newLogs:String) -> String? {
+    public func findIncomingRunners (newLogs:String) -> [IncomingRunner]? {
         
-        // TODO: This should probably instead spit out a list of Runners
-        
-        let pattern = #"""
+        let runnerBlockPattern = #"""
         (?<header>(>Next 10 runners inbound to .* as of \d{1,4} hours))
         (?<runner>(^\d{1,4}(.+ ){1,3}Projected in at \d{1,4} hours\n?)){0,10}
         """#
         
-        return try? runRegEx(pattern: pattern, onString: newLogs)?.first
+        guard let runnerBlock = try? runRegEx(pattern: runnerBlockPattern, onString: newLogs)?.first else {
+            return nil
+        }
+        
+        var runners = [IncomingRunner]()
+        
+        let runnerLinePattern = #"(^\d{1,4}(.+ ){1,3}Projected in at \d{1,4} hours)"#
+        guard let runnerLineStrings = try? runRegEx(pattern: runnerLinePattern, onString: runnerBlock) else {
+            return nil
+        }
+        runners = runnerLineStrings.map({ (tempLineString:String) -> IncomingRunner in
+            guard var stationString = try? runRegEx(pattern: #"^ (.+)  Temp"#, onString: tempLineString)?.first,
+                  var updateTimeString = try? runRegEx(pattern: #"^ (.+)  Temp"#, onString: tempLineString)?.first,
+                  var bibString = try? runRegEx(pattern: #"^ (.+)  Temp"#, onString: tempLineString)?.first,
+                  var nameString = try? runRegEx(pattern: #"^ (.+)  Temp"#, onString: tempLineString)?.first,
+                  let projectedString = try? runRegEx(pattern: #"at \d{1,4}"#, onString: tempLineString)?.first else {
+                return IncomingRunner(station: "",
+                                      updateTime: "0000",
+                                      bib: -1,
+                                      name: "",
+                                      projectedTime: "0000")
+            }
+            
+            // Lose the space at the beginning of the line
+            nameString.removeFirst()
+            
+            let stationValue = stationString.replacingOccurrences(of: "  Temp", with: "")
+            let updateTimeValue = updateTimeString.replacingOccurrences(of: "  Temp", with: "")
+            let bibValue = Int(bibString.replacingOccurrences(of: "Temp. = ", with: "")) ?? -1
+            let nameValue = nameString.replacingOccurrences(of: "at ", with: "")
+            let projectedTimeValue = projectedString.replacingOccurrences(of: "at ", with: "")
+            return IncomingRunner(station: stationValue,
+                                  updateTime: updateTimeValue,
+                                  bib: bibValue,
+                                  name: nameValue,
+                                  projectedTime: projectedTimeValue)
+        })
+        
+        return runners
     }
     
     @discardableResult
