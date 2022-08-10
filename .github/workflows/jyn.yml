@@ -1,0 +1,22 @@
+name: Jyn
+
+on:
+  push:
+    branches: [ "jyn" ]
+  pull_request:
+    branches: [ "jyn" ]
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build
+      run: swift build -v
+      working-directory: jyn
+    - name: Run tests
+      run: swift test -v
+      working-directory: jyn
+
