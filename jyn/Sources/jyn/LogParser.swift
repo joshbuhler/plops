@@ -18,7 +18,6 @@ public class LogParser:LogParserProtocol {
     public func findIncomingRunners (newLogs:String) throws -> String? {
         
         // TODO: This should probably instead spit out a list of Runners
-        var returnString:String?
         
         let pattern = #"""
         (?<header>(>Next 10 runners inbound to .* as of \d{1,4} hours))
@@ -64,5 +63,6 @@ public class LogParser:LogParserProtocol {
 extension LogParser: FileMonitorDelegate {
     func didReceive(changes: String) {
         try? self.findIncomingRunners(newLogs: changes)
+        try? self.findReportedTemps(newLogs: changes)
     }
 }
