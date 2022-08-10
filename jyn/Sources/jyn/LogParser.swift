@@ -40,12 +40,26 @@ public class LogParser:LogParserProtocol {
         
         var temps = [Temperature]()
         
-        let tempLinePattern = #"(^ (.+)  Temp. = \d{1,3} at \d{1,4})+"#
-        guard let tempStrings = try? runRegEx2(pattern: tempLinePattern, onString: tempBlock) else {
+        let tempLinePattern = #"(^ (.+)  Temp. = \d{1,3} at \d{1,4})"#
+        guard let tempLineStrings = try? runRegEx2(pattern: tempLinePattern, onString: tempBlock) else {
             return nil
         }
-        temps = tempStrings.map({ (tempString:String) -> Temperature in
-            Temperature(station: tempString, temp: 1, time: "1234")
+        temps = tempLineStrings.map({ (tempLineString:String) -> Temperature in
+            guard var nameString = try? runRegEx(pattern: #"^ (.+)  Temp"#, onString: tempLineString),
+                  let tempString = try? runRegEx(pattern: #"Temp. = \d{1,3}"#, onString: tempLineString),
+                  let timeString = try? runRegEx(pattern: #"at \d{1,4}"#, onString: tempLineString) else {
+                return Temperature(station: "EMPTY", temp: -1, time: "0000")
+            }
+            
+            // Lose the space at the beginning of the line
+            nameString.removeFirst()
+            
+            let stationValue = nameString.replacingOccurrences(of: "  Temp", with: "")
+            let tempValue = Int(tempString.replacingOccurrences(of: "Temp. = ", with: "")) ?? -1
+            let timeValue = timeString.replacingOccurrences(of: "at ", with: "")
+            return Temperature(station: stationValue,
+                               temp: tempValue,
+                               time: timeValue)
         })
         
         
