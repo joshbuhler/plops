@@ -73,6 +73,10 @@ class LogParserTests: XCTestCase {
         let actualTemps:[Temperature] = try XCTUnwrap(parser.findReportedTemps(newLogs: sample))
         XCTAssertEqual(actualTemps.count, 6)
         
+        let _ = actualTemps.map { temp in
+            print ("Temp: \(temp)")
+        }
+        
         guard actualTemps.count >= 5 else {
             XCTFail()
             return
