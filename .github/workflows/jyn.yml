@@ -2,9 +2,9 @@ name: Jyn
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ "jyn" ]
   pull_request:
-    branches: [ "develop" ]
+    branches: [ "jyn" ]
 
 jobs:
   build:
