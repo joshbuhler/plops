@@ -27,6 +27,16 @@ public class LogParser:LogParserProtocol {
         
         return try? runRegEx(pattern: pattern, onString: newLogs) ?? nil
     }
+    
+    public func findReportedTemps (newLogs:String) throws -> String? {
+        let pattern = #"""
+            (?<header>(>Reported Temperatures))
+            (?<temps>(^ (.+)  Temp. = \d{1,3} at \d{1,4}\n?))+
+            """#
+        
+        return try? runRegEx(pattern: pattern, onString: newLogs) ?? nil
+    }
+    
     private func runRegEx (pattern:String, onString:String) throws -> String? {
         var returnString:String?
         

@@ -55,6 +55,37 @@ class LogParserTests: XCTestCase {
         XCTAssertEqual(actualString, expected)
     }
     
+    func test_findReportedTemps() throws {
+        let sample = """
+>> Pole Line Pass Temp reported 53 at 0104
+
+>Reported Temperatures
+ Alexander Ridge  Temp. = 84 at 1606
+ Lamb's Canyon  Temp. = 89 at 1624
+ Scott's Peak  Temp. = 48 at 2302
+ Brighton Lodge  Temp. = 49 at 2104
+ Pole Line Pass  Temp. = 53 at 0104
+ Decker Canyon  Temp. = 57 at 2147
+
+>At 0106 hours, Runner 404  no times reported
+"""
+        let expected = """
+>Reported Temperatures
+ Alexander Ridge  Temp. = 84 at 1606
+ Lamb's Canyon  Temp. = 89 at 1624
+ Scott's Peak  Temp. = 48 at 2302
+ Brighton Lodge  Temp. = 49 at 2104
+ Pole Line Pass  Temp. = 53 at 0104
+ Decker Canyon  Temp. = 57 at 2147
+
+"""
+        // NEED TO ACCOUNT FOR LINE BREAKS
+        let parser = LogParser()
+        let actualString = try? XCTUnwrap(parser.findReportedTemps(newLogs:sample))
+        
+        XCTAssertEqual(actualString, expected)
+    }
+    
 //    func testPerformanceExample() throws {
 //        // This is an example of a performance test case.
 //        self.measure {
