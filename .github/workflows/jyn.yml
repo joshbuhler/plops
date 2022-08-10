@@ -13,9 +13,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Find Jyn
-      run: cd jyn
     - name: Build
       run: swift build -v
+      working-directory: ./jyn
     - name: Run tests
       run: swift test -v
+      working-directory: ./jyn
+
