@@ -24,17 +24,23 @@ public class LogParser:LogParserProtocol {
         (?<header>(>Next 10 runners inbound to .* as of \d{1,4} hours))
         (?<runner>(^\d{1,4}(.+ ){1,3}Projected in at \d{1,4} hours\n?)){0,10}
         """#
+        
+        return try? runRegEx(pattern: pattern, onString: newLogs) ?? nil
+    }
+    private func runRegEx (pattern:String, onString:String) throws -> String? {
+        var returnString:String?
+        
         let regex = try NSRegularExpression(pattern: pattern, options: [.anchorsMatchLines])
         //let range = NSRange(0..<logOutput.count)
-        let range = NSRange(location: 0, length: newLogs.count)
-        regex.enumerateMatches(in: newLogs, options: [], range: range) { (match, _, stop) in
+        let range = NSRange(location: 0, length: onString.count)
+        regex.enumerateMatches(in: onString, options: [], range: range) { (match, _, stop) in
             guard let match = match else {
                 print("no match")
                 return
             }
             if (match.numberOfRanges > 0) {
-                if let foundRange = Range(match.range(at:0), in: newLogs) {
-                    let matchText = newLogs[foundRange]
+                if let foundRange = Range(match.range(at:0), in: onString) {
+                    let matchText = onString[foundRange]
                     print ("✅ \(matchText)")
                     returnString = String(matchText)
                 }
