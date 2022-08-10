@@ -69,21 +69,20 @@ class LogParserTests: XCTestCase {
 
 >At 0106 hours, Runner 404  no times reported
 """
-        let expected = """
->Reported Temperatures
- Alexander Ridge  Temp. = 84 at 1606
- Lamb's Canyon  Temp. = 89 at 1624
- Scott's Peak  Temp. = 48 at 2302
- Brighton Lodge  Temp. = 49 at 2104
- Pole Line Pass  Temp. = 53 at 0104
- Decker Canyon  Temp. = 57 at 2147
-
-"""
-        // NEED TO ACCOUNT FOR LINE BREAKS
         let parser = LogParser()
-        let actualString = try? XCTUnwrap(parser.findReportedTemps(newLogs:sample))
+        let actualTemps:[Temperature] = try XCTUnwrap(parser.findReportedTemps(newLogs: sample))
+        XCTAssertEqual(actualTemps.count, 6)
         
-        XCTAssertEqual(actualString, expected)
+        guard actualTemps.count >= 5 else {
+            XCTFail()
+            return
+        }
+        
+        let poleLine_expected = Temperature(station: "Pole Line Pass",
+                                            temp: 53,
+                                            time: "0104")
+        let poleLine_actual = actualTemps[4]
+        XCTAssertEqual(poleLine_actual, poleLine_expected)
     }
     
 //    func testPerformanceExample() throws {

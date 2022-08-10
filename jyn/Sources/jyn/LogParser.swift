@@ -9,6 +9,7 @@ import Foundation
 
 public protocol LogParserProtocol {
     func findIncomingRunners (newLogs:String) throws -> String?
+    func findReportedTemps (newLogs:String) -> [Temperature]?
 }
 
 public class LogParser:LogParserProtocol {
@@ -27,13 +28,28 @@ public class LogParser:LogParserProtocol {
         return try? runRegEx(pattern: pattern, onString: newLogs) ?? nil
     }
     
-    public func findReportedTemps (newLogs:String) throws -> String? {
-        let pattern = #"""
+    @discardableResult
+    public func findReportedTemps (newLogs:String) -> [Temperature]? {
+        let tempBlockPattern = #"""
             (?<header>(>Reported Temperatures))
             (?<temps>(^ (.+)  Temp. = \d{1,3} at \d{1,4}\n?))+
             """#
+        guard let tempBlock = try? runRegEx(pattern: tempBlockPattern, onString: newLogs) else {
+            return nil
+        }
         
-        return try? runRegEx(pattern: pattern, onString: newLogs) ?? nil
+        var temps = [Temperature]()
+        
+        let tempLinePattern = #"(^ (.+)  Temp. = \d{1,3} at \d{1,4})+"#
+        guard let tempStrings = try? runRegEx2(pattern: tempLinePattern, onString: tempBlock) else {
+            return nil
+        }
+        temps = tempStrings.map({ (tempString:String) -> Temperature in
+            Temperature(station: tempString, temp: 1, time: "1234")
+        })
+        
+        
+        return temps
     }
     
     private func runRegEx (pattern:String, onString:String) throws -> String? {
@@ -58,11 +74,33 @@ public class LogParser:LogParserProtocol {
         
         return returnString
     }
+    
+    private func runRegEx2 (pattern:String, onString:String) throws -> [String]? {
+        var returnStrings = [String]()
+        
+        let regex = try NSRegularExpression(pattern: pattern, options: [.anchorsMatchLines])
+        let range = NSRange(location: 0, length: onString.count)
+        regex.enumerateMatches(in: onString, options: [], range: range) { (match, _, stop) in
+            guard let match = match else {
+                print("no match")
+                return
+            }
+            if (match.numberOfRanges > 0) {
+                if let foundRange = Range(match.range(at:0), in: onString) {
+                    let matchText = onString[foundRange]
+                    print ("✅ \(matchText)")
+                    returnStrings.append(String(matchText))
+                }
+            }
+        }
+        
+        return returnStrings
+    }
 }
 
 extension LogParser: FileMonitorDelegate {
     func didReceive(changes: String) {
         try? self.findIncomingRunners(newLogs: changes)
-        try? self.findReportedTemps(newLogs: changes)
+        self.findReportedTemps(newLogs: changes)
     }
 }
