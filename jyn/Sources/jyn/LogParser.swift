@@ -28,6 +28,11 @@ public class LogParser:LogParserProtocol {
             return nil
         }
         
+        guard let stationString = try? runRegEx(pattern: #"(inbound to  .*) as of"#, onString: runnerBlock)?.first,
+              let updateTimeString = try? runRegEx(pattern: #"\d{1,4} hours"#, onString: runnerBlock)?.first else {
+            return nil
+        }
+        
         var runners = [IncomingRunner]()
         
         let runnerLinePattern = #"(^\d{1,4}(.+ ){1,3}Projected in at \d{1,4} hours)"#
@@ -35,10 +40,8 @@ public class LogParser:LogParserProtocol {
             return nil
         }
         runners = runnerLineStrings.map({ (tempLineString:String) -> IncomingRunner in
-            guard var stationString = try? runRegEx(pattern: #"^ (.+)  Temp"#, onString: tempLineString)?.first,
-                  var updateTimeString = try? runRegEx(pattern: #"^ (.+)  Temp"#, onString: tempLineString)?.first,
-                  var bibString = try? runRegEx(pattern: #"^ (.+)  Temp"#, onString: tempLineString)?.first,
-                  var nameString = try? runRegEx(pattern: #"^ (.+)  Temp"#, onString: tempLineString)?.first,
+            guard let bibString = try? runRegEx(pattern: #"^\d{1,4}"#, onString: tempLineString)?.first,
+                  let nameString = try? runRegEx(pattern: #"(?=[^\d ])(.+ )Projected"#, onString: tempLineString)?.first,
                   let projectedString = try? runRegEx(pattern: #"at \d{1,4}"#, onString: tempLineString)?.first else {
                 return IncomingRunner(station: "",
                                       updateTime: "0000",
@@ -46,14 +49,12 @@ public class LogParser:LogParserProtocol {
                                       name: "",
                                       projectedTime: "0000")
             }
-            
-            // Lose the space at the beginning of the line
-            nameString.removeFirst()
-            
-            let stationValue = stationString.replacingOccurrences(of: "  Temp", with: "")
-            let updateTimeValue = updateTimeString.replacingOccurrences(of: "  Temp", with: "")
-            let bibValue = Int(bibString.replacingOccurrences(of: "Temp. = ", with: "")) ?? -1
-            let nameValue = nameString.replacingOccurrences(of: "at ", with: "")
+                        
+            let stationValue = stationString.replacingOccurrences(of: "inbound to  ", with: "")
+                .replacingOccurrences(of: " as of", with: "")
+            let updateTimeValue = updateTimeString.replacingOccurrences(of: " hours", with: "")
+            let bibValue = Int(bibString) ?? -1
+            let nameValue = nameString.replacingOccurrences(of: " Projected", with: "")
             let projectedTimeValue = projectedString.replacingOccurrences(of: "at ", with: "")
             return IncomingRunner(station: stationValue,
                                   updateTime: updateTimeValue,
@@ -115,7 +116,7 @@ public class LogParser:LogParserProtocol {
             if (match.numberOfRanges > 0) {
                 if let foundRange = Range(match.range(at:0), in: onString) {
                     let matchText = onString[foundRange]
-                    print ("✅ \(matchText)")
+                    //print ("✅ \(matchText)")
                     returnStrings.append(String(matchText))
                 }
             }
