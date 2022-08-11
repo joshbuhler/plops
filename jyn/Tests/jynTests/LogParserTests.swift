@@ -27,13 +27,13 @@ class LogParserTests: XCTestCase {
 001 Andy Lefriec Projected in at 2310 hours
 002 Grant Barnette Projected in at 2324 hours
 003 I Have ThreeNames Projected in at 2326 hours
-004 Nathan Williams Projected in at 2329 hours
+004 And I Have Four Projected in at 0004 hours
 005 Tyler Waterhouse Projected in at 2339 hours
 006 Jonathan Crawley Projected in at 2339 hours
 007 Neil Campbell Projected in at 2341 hours
 008 Jay Aldous Projected in at 2353 hours
 009 Groot Projected in at 1234 hours
-1234 Donkey Kong Projected in at 2345 hours
+0010 Donkey Kong Projected in at 2345 hours
 
 >#175,   OK @ 2304MDT
 """
@@ -52,7 +52,7 @@ class LogParserTests: XCTestCase {
         
         let poleLine_expected = IncomingRunner(station: "Pole Line Pass",
                                                updateTime: "2304",
-                                               bib: 285,
+                                               bib: "008",
                                                name: "Jay Aldous",
                                                projectedTime: "2353")
         let poleLine_actual = actualRunners[8]
@@ -60,11 +60,27 @@ class LogParserTests: XCTestCase {
         
         let poleLine_expected_singleName = IncomingRunner(station: "Pole Line Pass",
                                                           updateTime: "2304",
-                                                          bib: 123,
+                                                          bib: "009",
                                                           name: "Groot",
                                                           projectedTime: "1234")
         let poleLine_actual_singleName = actualRunners[9]
         XCTAssertEqual(poleLine_actual_singleName, poleLine_expected_singleName)
+        
+        let poleLine_expected_threeNames = IncomingRunner(station: "Pole Line Pass",
+                                                          updateTime: "2304",
+                                                          bib: "003",
+                                                          name: "I Have ThreeNames",
+                                                          projectedTime: "2326")
+        let poleLine_actual_threeNames = actualRunners[3]
+        XCTAssertEqual(poleLine_actual_threeNames, poleLine_expected_threeNames)
+        
+        let poleLine_expected_fourNames = IncomingRunner(station: "Pole Line Pass",
+                                                          updateTime: "2304",
+                                                          bib: "004",
+                                                          name: "And I Have Four",
+                                                          projectedTime: "0004")
+        let poleLine_actual_fourNames = actualRunners[4]
+        XCTAssertEqual(poleLine_actual_fourNames, poleLine_expected_fourNames)
     }
     
     func test_findReportedTemps() throws {

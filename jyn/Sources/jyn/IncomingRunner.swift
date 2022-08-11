@@ -11,7 +11,7 @@ public struct IncomingRunner:Equatable {
     let station:String
     let updateTime:String
     
-    let bib:Int
+    let bib:String
     let name:String
-    let projectedTime:String    
+    let projectedTime:String
 }

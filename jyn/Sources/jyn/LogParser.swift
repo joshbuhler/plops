@@ -21,7 +21,7 @@ public class LogParser:LogParserProtocol {
         
         let runnerBlockPattern = #"""
         (?<header>(>Next 10 runners inbound to .* as of \d{1,4} hours))
-        (?<runner>(^\d{1,4}(.+ ){1,3}Projected in at \d{1,4} hours\n?)){0,10}
+        (?<runner>(^\d{1,4}(.+ )Projected in at \d{1,4} hours\n?))+
         """#
         
         guard let runnerBlock = try? runRegEx(pattern: runnerBlockPattern, onString: newLogs)?.first else {
@@ -35,7 +35,7 @@ public class LogParser:LogParserProtocol {
         
         var runners = [IncomingRunner]()
         
-        let runnerLinePattern = #"(^\d{1,4}(.+ ){1,3}Projected in at \d{1,4} hours)"#
+        let runnerLinePattern = #"(^\d{1,4}(.+ )Projected in at \d{1,4} hours)+"#
         guard let runnerLineStrings = try? runRegEx(pattern: runnerLinePattern, onString: runnerBlock) else {
             return nil
         }
@@ -45,7 +45,7 @@ public class LogParser:LogParserProtocol {
                   let projectedString = try? runRegEx(pattern: #"at \d{1,4}"#, onString: tempLineString)?.first else {
                 return IncomingRunner(station: "",
                                       updateTime: "0000",
-                                      bib: -1,
+                                      bib: "-1",
                                       name: "",
                                       projectedTime: "0000")
             }
@@ -53,7 +53,7 @@ public class LogParser:LogParserProtocol {
             let stationValue = stationString.replacingOccurrences(of: "inbound to  ", with: "")
                 .replacingOccurrences(of: " as of", with: "")
             let updateTimeValue = updateTimeString.replacingOccurrences(of: " hours", with: "")
-            let bibValue = Int(bibString) ?? -1
+            let bibValue = bibString
             let nameValue = nameString.replacingOccurrences(of: " Projected", with: "")
             let projectedTimeValue = projectedString.replacingOccurrences(of: "at ", with: "")
             return IncomingRunner(station: stationValue,
