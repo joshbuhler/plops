@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SKQueue
 
 public protocol LogParserProtocol {
     func findIncomingRunners (newLogs:String) -> [IncomingRunner]?
@@ -126,9 +127,15 @@ public class LogParser:LogParserProtocol {
     }
 }
 
-extension LogParser: FileMonitorDelegate {
-    func didReceive(changes: String) {
-        self.findIncomingRunners(newLogs: changes)
-        self.findReportedTemps(newLogs: changes)
+//extension LogParser: FileMonitorDelegate {
+//    func didReceive(changes: String) {
+//        self.findIncomingRunners(newLogs: changes)
+//        self.findReportedTemps(newLogs: changes)
+//    }
+//}
+
+extension LogParser: SKQueueDelegate {
+    public func receivedNotification(_ notification: SKQueueNotification, path: String, queue: SKQueue) {
+        print("\(notification.toStrings().map { $0.rawValue }) @ \(path)")
     }
 }
