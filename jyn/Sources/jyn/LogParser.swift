@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import SKQueue
+//import SKQueue
 
 public protocol LogParserProtocol {
     func findIncomingRunners (newLogs:String) -> [IncomingRunner]?
