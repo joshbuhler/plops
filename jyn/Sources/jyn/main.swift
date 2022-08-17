@@ -1,5 +1,4 @@
 import Foundation
-import SKQueue
 
 print("May the Force be with us.")
 
@@ -7,16 +6,14 @@ print("May the Force be with us.")
 //let logURL = URL(fileURLWithPath: "./testLogs/log_2019.log")
 let logURL = URL(fileURLWithPath: "/Users/josh/Projects/plops/jyn/Sources/jyn/Resources/log_2019.log")
 print ("logURL: \(logURL)")
-//guard let fileMon = try? FileMonitor(url: logURL) else {
-//    print ("Failed to create FileMonitor")
-//    exit(-1)
-//}
+guard let fileMon = try? FileMonitor(url: logURL) else {
+    print ("Failed to create FileMonitor")
+    exit(-1)
+}
 
 var logParser = LogParser()
-//fileMon.delegate = logParser
-let queue = SKQueue(delegate: logParser)
+fileMon.delegate = logParser
 
-queue?.addPath(logURL.path)
 
 RunLoop.current.run()
 

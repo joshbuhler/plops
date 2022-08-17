@@ -8,46 +8,47 @@
 
 import Foundation
 
-//protocol FileMonitorDelegate:AnyObject {
-//    func didReceive(changes:String)
-//}
-//
-//final class FileMonitor {
-//    
-//    let url:URL
-//    
-//    let fileHandle:FileHandle
+protocol FileMonitorDelegate:AnyObject {
+    func didReceive(changes:String)
+}
+
+final class FileMonitor {
+    
+    let url:URL
+    
+    let fileHandle:FileHandle
 //    let source:DispatchSourceFileSystemObject
-//    weak var delegate: FileMonitorDelegate?
-//    
-//    init(url: URL) throws {
-//        self.url = url
-//        self.fileHandle = try FileHandle(forReadingFrom: url)
-//        
-//        source = DispatchSource.makeFileSystemObjectSource(
-//            fileDescriptor: fileHandle.fileDescriptor,
-//            eventMask: .extend,
-//            queue: DispatchQueue.main
-//        )
-//        
-//        source.setEventHandler {
-//            let event = self.source.data
-//            self.process(event: event)
-//        }
-//        
-//        source.setCancelHandler {
-////            try? self.fileHandle.close()
-//            try? self.fileHandle.closeFile()
-//        }
-//        
-//        fileHandle.seekToEndOfFile()
-//        source.resume()
-//    }
-//    
-//    deinit {
-//        source.cancel()
-//    }
-//    
+    weak var delegate: FileMonitorDelegate?
+    
+    let stdOut:Pipe?
+    let process:Process?
+    let token:NSObjectProtocol?
+    
+    init(url: URL) throws {
+        self.url = url
+        self.fileHandle = try FileHandle(forReadingFrom: url)
+        
+        stdOut = Pipe()
+        process = Process()
+        process?.launchPath = "/usr/bin/swift"
+        process?.standardOutput = stdOut
+        process?.launch()
+
+        token = NotificationCenter.default.addObserver(forName: .NSFileHandleDataAvailable,
+                                                       object: stdOut?.fileHandleForReading,
+                                                       queue: nil) { note in
+            let handle = note.object as! FileHandle
+            // Read the available data ...
+            handle.waitForDataInBackgroundAndNotify()
+        }
+
+        stdOut?.fileHandleForReading.waitForDataInBackgroundAndNotify()
+    }
+    
+    deinit {
+        //source.cancel()
+    }
+    
 //    func process(event: DispatchSource.FileSystemEvent) {
 //        guard event.contains(.extend) else {
 //            return
@@ -56,4 +57,4 @@ import Foundation
 //        let string = String(data: newData, encoding: .utf8)!
 //        self.delegate?.didReceive(changes: string)
 //    }
-//}
+}
