@@ -16,37 +16,50 @@ final class FileMonitor {
     
     let url:URL
     
-    let fileHandle:FileHandle
-//    let source:DispatchSourceFileSystemObject
+    var fileTimer:Timer?
+
     weak var delegate: FileMonitorDelegate?
     
-    let stdOut:Pipe?
-    let process:Process?
-    let token:NSObjectProtocol?
+    var lastLength:Int = 0
+    
+//    let stdOut:Pipe?
+//    let process:Process?
+//    let token:NSObjectProtocol?
     
     init(url: URL) throws {
         self.url = url
-        self.fileHandle = try FileHandle(forReadingFrom: url)
         
-        stdOut = Pipe()
-        process = Process()
-        process?.launchPath = "/usr/bin/swift"
-        process?.standardOutput = stdOut
-        process?.launch()
-
-        token = NotificationCenter.default.addObserver(forName: .NSFileHandleDataAvailable,
-                                                       object: stdOut?.fileHandleForReading,
-                                                       queue: nil) { note in
-            let handle = note.object as! FileHandle
-            // Read the available data ...
-            handle.waitForDataInBackgroundAndNotify()
-        }
-
-        stdOut?.fileHandleForReading.waitForDataInBackgroundAndNotify()
+        self.resetTimer()
     }
     
     deinit {
         //source.cancel()
+    }
+    
+    func resetTimer () {
+        fileTimer?.invalidate()
+        
+        if #available(macOS 10.12, *) {
+            fileTimer = Timer.scheduledTimer(withTimeInterval: 3, repeats: true) {[weak self] timer in
+                print ("timer")
+                self?.processFile()
+            }
+        } else {
+            // Fallback on earlier versions
+        }
+    }
+    
+    func processFile () {
+        guard let fileContents = try? String.init(contentsOfFile: url.path) else {
+            print ("Failed to load file")
+            return
+        }
+        
+        print ("fileLength: \(fileContents.count)")
+        lastLength = fileContents.count
+        
+//        let newStuff = fileContents.suffix(100)
+//        delegate?.didReceive(changes: newStuff)
     }
     
 //    func process(event: DispatchSource.FileSystemEvent) {
