@@ -127,8 +127,10 @@ public class LogParser:LogParserProtocol {
     }
 }
 
-extension LogParser: FileMonitorDelegate {
+extension LogParser: FileMonitorDelegateProtocol {
     func didReceive(changes: String) {
+        
+        print ("---------- didReceiveChanges ----------")
         let foundRunners = self.findIncomingRunners(newLogs: changes) ?? [IncomingRunner]()
         let foundTemps = self.findReportedTemps(newLogs: changes)
         
@@ -142,5 +144,6 @@ extension LogParser: FileMonitorDelegate {
         let _ = foundTemps.map { temp in
             print ("Temp: \(temp)")
         }
+        print ("---------------------------------------")
     }
 }

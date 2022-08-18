@@ -6,7 +6,7 @@ print("May the Force be with us.")
 //let logURL = URL(fileURLWithPath: "./testLogs/log_2019.log")
 let logURL = URL(fileURLWithPath: "/Users/josh/Projects/plops/jyn/Sources/jyn/Resources/log_2019.log")
 print ("logURL: \(logURL)")
-guard let fileMon = try? FileMonitor(url: logURL) else {
+guard let fileMon = try? FileMonitor(url: logURL, monitorInterval: 10) else {
     print ("Failed to create FileMonitor")
     exit(-1)
 }

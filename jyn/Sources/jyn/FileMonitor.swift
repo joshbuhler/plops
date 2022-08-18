@@ -3,102 +3,91 @@
 //  
 //
 //  Created by Joshua Buhler on 8/8/22.
-//  Basically stolen from: https://swiftrocks.com/dispatchsource-detecting-changes-in-files-and-folders-in-swift.html
 //
 
 import Foundation
 
-protocol FileMonitorDelegate:AnyObject {
+protocol FileMonitorDelegateProtocol:AnyObject {
     func didReceive(changes:String)
+}
+
+protocol FileMonitorProtocol {
+    var delegate:FileMonitorDelegateProtocol { get set }
+    
+    func stopMonitoring()
 }
 
 final class FileMonitor {
     
-    let url:URL
+    private let url:URL
     
-    var fileTimer:Timer?
+    private var fileTimer:Timer?
+    private var monitorInterval:TimeInterval
 
-    weak var delegate: FileMonitorDelegate?
+    weak var delegate: FileMonitorDelegateProtocol?
     
-    let fileHandle:FileHandle
-    var fileObserver:NSObjectProtocol?
+    private let fileHandle:FileHandle
+    private var fileObserver:NSObjectProtocol?
     
-    var lastLength:Int = 0
-    
-//    let stdOut:Pipe?
-//    let process:Process?
-//    let token:NSObjectProtocol?
-    
-    init(url: URL) throws {
+    init(url: URL, monitorInterval:TimeInterval) throws {
         self.url = url
+        self.monitorInterval = monitorInterval
         
         try fileHandle = FileHandle.init(forReadingFrom: url)
         setupFileHandler()
         
-//        self.resetTimer()
+        self.resetTimer()
     }
     
-    deinit {
-        //source.cancel()
-    }
-    
-    func resetTimer () {
-        fileTimer?.invalidate()
+    private func resetTimer () {
+        stopMonitoring()
         
         if #available(macOS 10.12, *) {
-            fileTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) {[weak self] timer in
-                print ("timer")
-//                self?.processFile()
+            fileTimer = Timer.scheduledTimer(withTimeInterval: monitorInterval,
+                                             repeats: true) {[weak self] timer in
                 self?.fileHandle.readInBackgroundAndNotify()
             }
         } else {
-            // Fallback on earlier versions
+            /// Fallback on earlier versions.
+            /// No real fallback though - the timer method above works just fine
+            /// Linux. It's just macOS complaining about the availability here.
         }
     }
     
-    func setupFileHandler () {
+    public func stopMonitoring () {
+        fileTimer?.invalidate()
+    }
+    
+    private func setupFileHandler () {
         let nc = NotificationCenter.default
         
         fileObserver = nc.addObserver(forName:FileHandle.readCompletionNotification,
                                       object: nil,
                                       queue: nil,
                                       using: { [weak self] n in
-            print("readCompletionNotification")
             guard let userinfo = n.userInfo,
                   let data = userinfo[NSFileHandleNotificationDataItem] as? Data else {
                 print("No data available")
                 return
             }
-            self?.processFile(data: data)
+            self?.handleChanges(data: data)
         })
         
         // start reading
         fileHandle.readInBackgroundAndNotify()
-        
-        resetTimer()
     }
-        
-    func processFile (data:Data) {
+    
+    ///
+    /// Should probably start jyn as a separate process that does one of the following:
+    ///     1. Run on a timer, posting findings to vapor routes
+    ///     2. Save findings as json to vapor's public folder. This can then be used to generate status page
+    
+    private func handleChanges (data:Data) {
         guard let fileContents = String(data: data, encoding: .utf8) else {
             print ("Failed to load file")
             return
         }
         
-        print ("fileLength: \(fileContents.count)")
-        lastLength = fileContents.count
-        
-//        print ("fileContents: \(fileContents)")
-        
-//        let newStuff = fileContents.suffix(100)
         delegate?.didReceive(changes: fileContents)
     }
-    
-//    func process(event: DispatchSource.FileSystemEvent) {
-//        guard event.contains(.extend) else {
-//            return
-//        }
-//        let newData = self.fileHandle.readDataToEndOfFile()
-//        let string = String(data: newData, encoding: .utf8)!
-//        self.delegate?.didReceive(changes: string)
-//    }
 }
