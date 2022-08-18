@@ -20,6 +20,9 @@ final class FileMonitor {
 
     weak var delegate: FileMonitorDelegate?
     
+    let fileHandle:FileHandle
+    var fileObserver:NSObjectProtocol?
+    
     var lastLength:Int = 0
     
 //    let stdOut:Pipe?
@@ -29,7 +32,10 @@ final class FileMonitor {
     init(url: URL) throws {
         self.url = url
         
-        self.resetTimer()
+        try fileHandle = FileHandle.init(forReadingFrom: url)
+        setupFileHandler()
+        
+//        self.resetTimer()
     }
     
     deinit {
@@ -40,23 +46,48 @@ final class FileMonitor {
         fileTimer?.invalidate()
         
         if #available(macOS 10.12, *) {
-            fileTimer = Timer.scheduledTimer(withTimeInterval: 3, repeats: true) {[weak self] timer in
+            fileTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) {[weak self] timer in
                 print ("timer")
-                self?.processFile()
+//                self?.processFile()
+                self?.fileHandle.readInBackgroundAndNotify()
             }
         } else {
             // Fallback on earlier versions
         }
     }
     
-    func processFile () {
-        guard let fileContents = try? String.init(contentsOfFile: url.path) else {
+    func setupFileHandler () {
+        let nc = NotificationCenter.default
+        
+        fileObserver = nc.addObserver(forName:FileHandle.readCompletionNotification,
+                                      object: nil,
+                                      queue: nil,
+                                      using: { [weak self] n in
+            print("readCompletionNotification")
+            guard let userinfo = n.userInfo,
+                  let data = userinfo[NSFileHandleNotificationDataItem] as? Data else {
+                print("No data available")
+                return
+            }
+            self?.processFile(data: data)
+        })
+        
+        // start reading
+        fileHandle.readInBackgroundAndNotify()
+        
+        resetTimer()
+    }
+        
+    func processFile (data:Data) {
+        guard let fileContents = String(data: data, encoding: .utf8) else {
             print ("Failed to load file")
             return
         }
         
         print ("fileLength: \(fileContents.count)")
         lastLength = fileContents.count
+        
+        print ("fileContents: \(fileContents)")
         
 //        let newStuff = fileContents.suffix(100)
 //        delegate?.didReceive(changes: newStuff)
