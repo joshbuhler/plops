@@ -87,10 +87,10 @@ final class FileMonitor {
         print ("fileLength: \(fileContents.count)")
         lastLength = fileContents.count
         
-        print ("fileContents: \(fileContents)")
+//        print ("fileContents: \(fileContents)")
         
 //        let newStuff = fileContents.suffix(100)
-//        delegate?.didReceive(changes: newStuff)
+        delegate?.didReceive(changes: fileContents)
     }
     
 //    func process(event: DispatchSource.FileSystemEvent) {
