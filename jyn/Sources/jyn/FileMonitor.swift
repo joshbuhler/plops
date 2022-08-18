@@ -28,7 +28,7 @@ final class FileMonitor {
     
     private let fileHandle:FileHandle
     private var fileObserver:NSObjectProtocol?
-    
+        
     init(url: URL, monitorInterval:TimeInterval) throws {
         self.url = url
         self.monitorInterval = monitorInterval
@@ -83,11 +83,15 @@ final class FileMonitor {
     ///     2. Save findings as json to vapor's public folder. This can then be used to generate status page
     
     private func handleChanges (data:Data) {
-        guard let fileContents = String(data: data, encoding: .utf8) else {
+        guard let newData = String(data: data, encoding: .utf8) else {
             print ("Failed to load file")
             return
         }
         
-        delegate?.didReceive(changes: fileContents)
+        guard !newData.isEmpty else {
+            return
+        }
+        
+        delegate?.didReceive(changes: newData)
     }
 }
