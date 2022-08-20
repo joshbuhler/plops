@@ -20,6 +20,7 @@ protocol FileMonitorProtocol {
 final class FileMonitor:FileMonitorProtocol {
     
     private let url:URL
+    private let verboseLogging:Bool
     
     private var fileTimer:Timer?
     private var monitorInterval:TimeInterval
@@ -29,8 +30,9 @@ final class FileMonitor:FileMonitorProtocol {
     private let fileHandle:FileHandle
     private var fileObserver:NSObjectProtocol?
         
-    init(url: URL, monitorInterval:TimeInterval) throws {
+    init(url: URL, monitorInterval:TimeInterval, verboseLogging:Bool = false) throws {
         self.url = url
+        self.verboseLogging = verboseLogging
         self.monitorInterval = monitorInterval
         
         try fileHandle = FileHandle.init(forReadingFrom: url)
@@ -51,6 +53,7 @@ final class FileMonitor:FileMonitorProtocol {
             /// Fallback on earlier versions.
             /// No real fallback though - the timer method above works just fine
             /// Linux. It's just macOS complaining about the availability here.
+            print ("Timer not available")
         }
     }
     
@@ -83,12 +86,18 @@ final class FileMonitor:FileMonitorProtocol {
     ///     2. Save findings as json to vapor's public folder. This can then be used to generate status page
     
     private func handleChanges (data:Data) {
+        if (verboseLogging) {
+            print ("handleChanges: \(data.count)")
+        }
         guard let newData = String(data: data, encoding: .utf8) else {
             print ("Failed to load file")
             return
         }
         
         guard !newData.isEmpty else {
+            if (verboseLogging) {
+                print ("newData was empty")
+            }
             return
         }
         
