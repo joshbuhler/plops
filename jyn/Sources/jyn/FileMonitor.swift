@@ -12,12 +12,12 @@ protocol FileMonitorDelegateProtocol:AnyObject {
 }
 
 protocol FileMonitorProtocol {
-    var delegate:FileMonitorDelegateProtocol { get set }
+    var delegate:FileMonitorDelegateProtocol? { get set }
     
     func stopMonitoring()
 }
 
-final class FileMonitor {
+final class FileMonitor:FileMonitorProtocol {
     
     private let url:URL
     
