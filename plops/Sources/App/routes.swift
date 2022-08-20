@@ -159,6 +159,20 @@ func routes(_ app: Application) throws {
         return HTTPStatus.created
     }
     
+    checkpoints.post(":callsign", "incomingrunners") { req -> HTTPStatus in
+        
+        guard let callsign = req.parameters.get("callsign") else {
+            throw Abort(.badRequest)
+        }
+        
+        let eventJSON = try req.content.decode(IncomingRunnersUpdate.self)
+        
+        req.logger.info("EventJSON: \(eventJSON)")
+        
+        // How to best serve this?
+        return HTTPStatus.created
+    }
+    
     // MARK: Runner Events
     
     let runevents = app.grouped("runevents")

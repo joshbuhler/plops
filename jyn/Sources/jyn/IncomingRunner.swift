@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct IncomingRunner:Equatable {
+public struct IncomingRunner:Equatable, Codable {
     let station:String
     let updateTime:String
     

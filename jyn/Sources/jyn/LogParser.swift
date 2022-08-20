@@ -125,6 +125,30 @@ public class LogParser:LogParserProtocol {
         
         return returnStrings
     }
+    
+    func postData (postURL:URL, data:Data) {
+        
+        var request = URLRequest(url: postURL)
+        request.httpMethod = "POST"
+        request.httpBody = data
+        
+        // TODO: async/await
+        let task = URLSession.shared.dataTask(with: request) { data, httpResponse, error in
+            if let error = error {
+                print ("Error posting URL: \(error)")
+                return
+            }
+            
+            guard let data = data,
+                  let responseString = String(data: data, encoding: .utf8) else {
+                print ("Error getting data")
+                return
+            }
+            
+            print ("Response: \(responseString)")
+        }
+        task.resume()
+    }
 }
 
 extension LogParser: FileMonitorDelegateProtocol {
@@ -137,6 +161,17 @@ extension LogParser: FileMonitorDelegateProtocol {
         for i in foundRunners {
             print ("Runner: \(i)\n")
         }
+        
+        var update = [String:[IncomingRunner]]()
+        let jsonEncoder = JSONEncoder()
+        update["incoming"] = foundRunners
+        if let updateJSON = try? jsonEncoder.encode(update),
+        let postURL = URL(string: "http://127.0.0.1:8080/checkpoints/m/incomingrunners") {
+            print("updateJSON: \(String(data: updateJSON as! Data, encoding: String.Encoding.utf8))")
+            self.postData(postURL: postURL,
+                          data: updateJSON)
+        }
+        
 //        let _ = foundRunners.map { temp in
 //            print ("Runner: \(temp)\n")
 //        }
