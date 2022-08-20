@@ -76,6 +76,14 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
+            argument = "--interval 3"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--verbose true"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "--log-file /Users/josh/Projects/plops/jyn/Sources/jyn/Resources/log_2019.log"
             isEnabled = "YES">
          </CommandLineArgument>
