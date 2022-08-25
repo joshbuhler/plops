@@ -173,10 +173,7 @@ extension LogParser: FileMonitorDelegateProtocol {
                           data: updateJSON)
         }
         
-//        let _ = foundRunners.map { temp in
-//            print ("Runner: \(temp)\n")
-//        }
-        
+        // TODO: if verbose
         let _ = foundTemps.map { temp in
             print ("Temp: \(temp)")
         }
