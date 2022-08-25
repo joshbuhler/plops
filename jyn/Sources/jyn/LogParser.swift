@@ -156,18 +156,19 @@ extension LogParser: FileMonitorDelegateProtocol {
         
         print ("---------- didReceiveChanges ----------")
         let foundRunners = self.findIncomingRunners(newLogs: changes) ?? [IncomingRunner]()
-        let foundTemps = self.findReportedTemps(newLogs: changes)
+        let foundTemps = self.findReportedTemps(newLogs: changes) ?? [Temperature]()
         
         for i in foundRunners {
             print ("Runner: \(i)\n")
         }
         
-        var update = [String:[IncomingRunner]]()
+        let status = StationStatus(incomingRunners: foundRunners,
+                                   temperatures: foundTemps)
         let jsonEncoder = JSONEncoder()
-        update["incoming"] = foundRunners
-        if let updateJSON = try? jsonEncoder.encode(update),
-        let postURL = URL(string: "http://127.0.0.1:8080/checkpoints/m/incomingrunners") {
-            print("updateJSON: \(String(data: updateJSON as! Data, encoding: String.Encoding.utf8))")
+        if let updateJSON = try? jsonEncoder.encode(status),
+           let postURL = URL(string: "http://127.0.0.1:8080/checkpoints/m/incomingrunners"),
+           let jsonData = String(data: updateJSON , encoding: String.Encoding.utf8) {
+            print("updateJSON: \(jsonData)")
             self.postData(postURL: postURL,
                           data: updateJSON)
         }

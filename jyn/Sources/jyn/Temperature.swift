@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Temperature:Equatable {
+public struct Temperature:Equatable, Codable {
     let station:String
     let temp:Int
     let time:String
