@@ -33,7 +33,41 @@ PoC work for parsing log data as well as some runner predictions via CoreML.
 
 
 
-## Current Ideas - 2022.04.11
+## Current Ideas
+
+### 2022.08.26
+
+Current state of things:
+	- Jyn app can monitor a log file and update every X seconds on macOS. On Raspbian, the FileHandles don't seem to read the file if it's updated outside of the app. Not sure why.
+	- There is a StationStatus struct that can be used with the `/checkpoints/m/incomingrunners` route. Idea here was to have Jyn posting to the route, and have the db updated with that.
+	- Vapor is running on the new pi, using postgres. Need to ensure that postgres is running:
+		+ https://pimylifeup.com/raspberry-pi-postgresql/
+		+ `psql`
+	- Start the server, specifying the hostname connections can be made at:
+		+ https://docs.vapor.codes/advanced/server/
+		+ `vapor run serve --hostname 192.168.1.124:8080`
+		+ `ctrl-c` to shut it down
+
+TODO:
+	- Read the log file based on a route. Thinking that maybe instead of using Jyn, I can use parts of it instead. When the route for the station status is hit, just load the log file, and find the most recent temperature and runner info, instead of trying to keep a running log.
+	- Jyn currently looks for any incoming runners. So, if we try to look at who's incoming to another station, that could throw things off. Plan for that.
+	- If loading the log on a route call, use a throttle - only load it up if it's been more than x minutes since the last update. Maybe can add a `forceRefresh` param to the route or something.
+	- Startup script to get the radio stuff, vapor, and the wifi up and running.
+	- Connecting to the station wifi should default to the plops status page.
+		+ https://en.wikipedia.org/wiki/Captive_portal
+		+ https://github.com/Splines/raspi-captive-portal
+		+ https://github.com/pihomeserver/Kupiki-Hotspot-Script
+		+ https://github.com/tretos53/Captive-Portal
+	- Get the pi working w/ the radio.
+	
+Eventually:
+	- Add a map with pins for runner estimates. We know when they left, when we expect them, so we could interpolate their position on the course, and drop an estimated pin.
+	- http://download.geofabrik.de/north-america/us/utah.html
+	- https://download.bbbike.org/osm/
+	- https://github.com/magellium/osmtilemaker
+
+
+### 2022.04.11
 
 Build out the PLOpS web app first. I want a simple REST API that can be used for runner CRUD operations, and storage into a simple database. This will enable a minimum of two things:
 

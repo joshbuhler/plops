@@ -122,7 +122,16 @@ func routes(_ app: Application) throws {
             return "Unable to load file"
         }
         
-        return "List of runners currently inbound to checkpoint with callsign: \(call) \n \(fileContents)"
+//        return "List of runners currently inbound to checkpoint with callsign: \(call) \n \(fileContents)"
+        
+        let parser = LogParser()
+        guard let runnerBlocks = parser.findIncomingRunnerBlocks(logString: fileContents),
+              let lastUpdate = runnerBlocks.last,
+              let runners = parser.findIncomingRunners(newLogs: lastUpdate) else {
+            return "No runners found"
+        }
+        
+        return "List of runners currently inbound to checkpoint with callsign: \(call) \n \(runners)"
     }
     
     checkpoints.post(":callsign", "runevent") { req -> HTTPStatus in
