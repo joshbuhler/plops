@@ -38,7 +38,7 @@ final class FileMonitor:FileMonitorProtocol {
         try fileHandle = FileHandle.init(forReadingFrom: url)
         setupFileHandler()
         
-        self.resetTimer()
+        //self.resetTimer()
     }
     
     private func resetTimer () {
