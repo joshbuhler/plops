@@ -113,6 +113,18 @@ func routes(_ app: Application) throws {
         return "List of runners currently inbound to checkpoint with callsign: \(call)"
     }
     
+    checkpoints.get(":callsign", "inbound2") { req -> String in
+        let call = req.parameters.get("callsign") ?? "NOT FOUND"
+        
+        
+        let logFileURL = URL(fileURLWithPath: "/Users/josh/Projects/plops/jyn/Tests/jynTests/Resources/big.log")
+        guard let fileContents = try? String(contentsOf: logFileURL) else {
+            return "Unable to load file"
+        }
+        
+        return "List of runners currently inbound to checkpoint with callsign: \(call) \n \(fileContents)"
+    }
+    
     checkpoints.post(":callsign", "runevent") { req -> HTTPStatus in
         
         guard let callsign = req.parameters.get("callsign") else {
