@@ -15,6 +15,9 @@ public func configure(_ app: Application) throws {
 //        password: Environment.get("DATABASE_PASSWORD") ?? "vapor_password",
 //        database: Environment.get("DATABASE_NAME") ?? "vapor_database"
 //    ), as: .psql)
+//username: Environment.get("DATABASE_USERNAME") ?? "kc6bsa",
+//+        password: Environment.get("DATABASE_PASSWORD") ?? "bronco",
+//+        database: Environment.get("DATABASE_NAME") ?? "plops"
 //
 //    app.migrations.add(CreateCheckpoints())
 //    app.migrations.add(CreateRunners())
