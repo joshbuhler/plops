@@ -136,5 +136,54 @@ class LogParserTests: XCTestCase {
         print ("resourceURL: \(resourceURL)")
         
         let logString = try XCTUnwrap(String(contentsOf: resourceURL))
+        
+        let parser = LogParser()
+        let runners = try XCTUnwrap(parser.findIncomingRunners(newLogs: logString))
+        XCTAssertFalse(runners.isEmpty)
+        
+        print ("runners found: \(runners.count)")
+        print ("runners: \(runners)")
     }
+    
+    func test_findIncomingRunnerBlocks() throws {
+        let sample = """
+>#312,   OK @ 2301MDT
+
+>Next 10 runners inbound to  Pole Line Pass as of 2304 hours
+000 Brian Culmo Projected in at 2302 hours
+001 Andy Lefriec Projected in at 2310 hours
+002 Grant Barnette Projected in at 2324 hours
+003 I Have ThreeNames Projected in at 2326 hours
+004 And I Have Four Projected in at 0004 hours
+005 Tyler Waterhouse Projected in at 2339 hours
+006 Jonathan Crawley Projected in at 2339 hours
+007 Neil Campbell Projected in at 2341 hours
+008 Jay Aldous Projected in at 2353 hours
+009 Groot Projected in at 1234 hours
+0010 Donkey Kong Projected in at 2345 hours
+
+>#175,   OK @ 2304MDT
+>Checkpoint L Runners Pending 55
+
+>Next 10 runners inbound to  Pole Line Pass as of 0741 hours
+69 Dave Ashton Projected in at 0737 hours
+8 Karen Bonnett-Natraj Projected in at 0745 hours
+150 Katie Lundvall Projected in at 0750 hours
+391 Matthew Mouritsen Projected in at 0754 hours
+234 Jeff Mandrell Projected in at 0759 hours
+95 Jim Trout Projected in at 0803 hours
+232 Eric Allen Projected in at 0803 hours
+318 Brandon Mclemore Projected in at 0806 hours
+362 Carolyn Luckett Projected in at 0806 hours
+372 Colleen Ford Projected in at 0808 hours
+
+> Pole Line Pass Runners In and NOT Out as of 0743
+"""
+        let parser = LogParser()
+        let blocksFound:[String] = try XCTUnwrap(parser.findIncomingRunnerBlocks(logString: sample))
+        XCTAssertNotNil(blocksFound)
+        XCTAssertEqual(blocksFound.count, 2)
+        
+    }
+        
 }

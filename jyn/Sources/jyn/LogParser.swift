@@ -15,21 +15,26 @@ public protocol LogParserProtocol {
 
 public class LogParser:LogParserProtocol {
     
-    /// Finds incoming runners.
+    /// Finds incoming runner blocks in a string.
     /// - Parameter newLogs: The string to parse for incoming runner info.
     @discardableResult
-    public func findIncomingRunners (newLogs:String) -> [IncomingRunner]? {
-        
+    public func findIncomingRunnerBlocks (logString:String) -> [String]? {
         let runnerBlockPattern = #"""
         (?<header>(>Next 10 runners inbound to .* as of \d{1,4} hours))
         (?<runner>(^\d{1,4}(.+ )Projected in at \d{1,4} hours\n?))+
         """#
         
-        guard let runnerBlock = try? runRegEx(pattern: runnerBlockPattern, onString: newLogs)?.first else {
-            return nil
-        }
+        return try? runRegEx(pattern: runnerBlockPattern, onString: logString)
+    }
+    
+    
+    /// Finds incoming runners in a block. Will return the first results found.
+    /// - Parameter newLogs: The string to parse for incoming runner info.
+    @discardableResult
+    public func findIncomingRunners (newLogs:String) -> [IncomingRunner]? {
         
-        guard let stationString = try? runRegEx(pattern: #"(inbound to  .*) as of"#, onString: runnerBlock)?.first,
+        guard let runnerBlock = findIncomingRunnerBlocks(logString: newLogs)?.first,
+              let stationString = try? runRegEx(pattern: #"(inbound to  .*) as of"#, onString: runnerBlock)?.first,
               let updateTimeString = try? runRegEx(pattern: #"\d{1,4} hours"#, onString: runnerBlock)?.first else {
             return nil
         }
@@ -158,10 +163,15 @@ extension LogParser: FileMonitorDelegateProtocol {
         let foundRunners = self.findIncomingRunners(newLogs: changes) ?? [IncomingRunner]()
         let foundTemps = self.findReportedTemps(newLogs: changes) ?? [Temperature]()
         
+        // TODO: if verbose - use a logger w/ log levels. verbose will need to only change the logger setting
         for i in foundRunners {
             print ("Runner: \(i)\n")
         }
         
+        // TODO: store vars for the last runners found.
+        /// This way, we always have a StationStatus that could be written out
+        /// to the server with the last known status, not just the most recent.
+        /// Will probably just write a simple HTML file to have Apache serve up.
         let status = StationStatus(incomingRunners: foundRunners,
                                    temperatures: foundTemps)
         let jsonEncoder = JSONEncoder()
