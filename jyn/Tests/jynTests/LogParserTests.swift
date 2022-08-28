@@ -124,4 +124,17 @@ class LogParserTests: XCTestCase {
 //        }
 //    }
     
+    func test_findAllUpdates () throws {
+//        let logFilePath = Bundle.main.path(forResource: "big", ofType: "log")
+//        XCTAssertNotNil(logFilePath)
+        
+        // https://stackoverflow.com/a/58034307/52566
+        let thisSourceFile = URL(fileURLWithPath: #file)
+        let thisDirectory = thisSourceFile.deletingLastPathComponent()
+        let testDir = thisDirectory.appendingPathComponent("Resources")
+        let resourceURL = testDir.appendingPathComponent("big.log")
+        print ("resourceURL: \(resourceURL)")
+        
+        let logString = try XCTUnwrap(String(contentsOf: resourceURL))
+    }
 }

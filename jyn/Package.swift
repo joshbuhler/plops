@@ -25,6 +25,7 @@ let package = Package(
                 ]),
         .testTarget(
             name: "jynTests",
-            dependencies: ["jyn"]),
+            dependencies: ["jyn"],
+            resources: [.copy("Resources")]),
     ]
 )
