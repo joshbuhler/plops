@@ -131,29 +131,29 @@ public class LogParser:LogParserProtocol {
         return returnStrings
     }
     
-    func postData (postURL:URL, data:Data) {
-        
-        var request = URLRequest(url: postURL)
-        request.httpMethod = "POST"
-        request.httpBody = data
-        
-        // TODO: async/await
-        let task = URLSession.shared.dataTask(with: request) { data, httpResponse, error in
-            if let error = error {
-                print ("Error posting URL: \(error)")
-                return
-            }
-            
-            guard let data = data,
-                  let responseString = String(data: data, encoding: .utf8) else {
-                print ("Error getting data")
-                return
-            }
-            
-            print ("Response: \(responseString)")
-        }
-        task.resume()
-    }
+//    func postData (postURL:URL, data:Data) {
+//        
+//        var request = URLRequest(url: postURL)
+//        request.httpMethod = "POST"
+//        request.httpBody = data
+//        
+//        // TODO: async/await
+//        let task = URLSession.shared.dataTask(with: request) { data, httpResponse, error in
+//            if let error = error {
+//                print ("Error posting URL: \(error)")
+//                return
+//            }
+//            
+//            guard let data = data,
+//                  let responseString = String(data: data, encoding: .utf8) else {
+//                print ("Error getting data")
+//                return
+//            }
+//            
+//            print ("Response: \(responseString)")
+//        }
+//        task.resume()
+//    }
 }
 
 //extension LogParser: FileMonitorDelegateProtocol {
