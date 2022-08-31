@@ -114,7 +114,7 @@ func routes(_ app: Application) throws {
     }
     
     checkpoints.get(":callsign", "inbound2") { req -> String in
-        let call = req.parameters.get("callsign") ?? "NOT FOUND"
+//        let call = req.parameters.get("callsign") ?? "NOT FOUND"
         
         
         let logFileURL = URL(fileURLWithPath: "/Users/josh/Projects/plops/jyn/Tests/jynTests/Resources/big.log")
