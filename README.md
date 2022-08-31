@@ -10,6 +10,24 @@ Pole-Line Operations Server
 A Vapor-powered application for runner operations at Pole-Line Pass for the Wasatch 100.
 
 
+## Startup
+
+- [ ] Power up Pi
+- [ ] Connect LAN port to LAN1 of Luxul router
+- [ ] Verify that Pi has an IP of 192.168.0.1
+- [ ] Start Plops
+	+ [ ] `vapor run serve --hostname 192.168.0.133`
+- [ ] Verify that `It works!`
+- [ ] Verify that inbound route is pointed at correct log file.
+
+## Troubleshooting
+
+- List processes using ports:
+	+ `sudo lsof -i :8080`
+	+ `kill <processID>`
+- 
+
+
 ## Related Projects
 
 ### SerialPi
@@ -46,6 +64,7 @@ Current state of things:
 	- Start the server, specifying the hostname connections can be made at:
 		+ https://docs.vapor.codes/advanced/server/
 		+ `vapor run serve --hostname 192.168.1.124:8080`
+		+ `vapor run serve --hostname kc6bsa.local`
 		+ `ctrl-c` to shut it down
 
 TODO:
