@@ -144,7 +144,11 @@ func routes(_ app: Application) throws {
             displayString += " \(bibString) |   \(i.projectedTime)    | \(i.name) \n"
         }
         displayString += "----------------------------------------------- \n"
-        displayString += "Last update: \(updateTime)"
+        
+        let currentTime = Date()
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "HH:mm:ss"
+        displayString += "Last update: \(updateTime) Current time: \(dateFormatter.string(from: currentTime))"
         
         return displayString
     }
