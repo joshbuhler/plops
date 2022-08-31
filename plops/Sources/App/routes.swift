@@ -5,7 +5,7 @@ func routes(_ app: Application) throws {
     
     // TODO: move routes into RouteCollections (see TodoController.swift)
     app.get { req in
-        return "It works!"
+        req.redirect(to:"/checkpoints/m/inbound2")
     }
 
     app.get("hello") { req -> String in
