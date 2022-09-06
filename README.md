@@ -10,23 +10,56 @@ Pole-Line Operations Server
 A Vapor-powered application for runner operations at Pole-Line Pass for the Wasatch 100.
 
 
-## Startup
+## Startup Checklist
 
-- [ ] Power up Pi
-- [ ] Connect LAN port to LAN1 of Luxul router
-- [ ] Verify that Pi has an IP of 192.168.0.1
-- [ ] Start Plops
-	+ [ ] `vapor run serve --hostname 192.168.0.133`
-- [ ] Verify that `It works!`
-- [ ] Verify that inbound route is pointed at correct log file.
+1. Power up Pi
+2. Connect LAN port to LAN1 of Luxul router
+3. Verify that Pi has an IP of 192.168.0.133 using `ifconfig`
+4. Start PLOpS
+	5. `cd ~/projects/plops/plops`
+	6. `vapor run serve --hostname 192.168.0.133` OR `.build/release/run` (best results w/ first one)
+	7. Startup message will show in command-line
+	8. Visit `http://192.168.0.133:8080` in browser.
+9. Bind ax.25 ports
+	10. `sudo kissattach /dev/serial0 1 10.1.1.1`
+11. Start axlisten
+	12. `sudo axlisten -a`
+13. Connect to Race System
+	14. `axcall 1 AC7BR-4` (Pick an appropriate callsign from the list below.)
+	15. `connect RACE`
+	16. `chkpt=l`
+	17. Once connected, start log:
+		18. `~o 2022_log.log`
+	19. Tail log in new tab to verify:
+		20. `tail -f ~/2022_log.log`
+21. Connect to system wifi "Pole Line Pass"
+22. Visit `http://192.168.0.133:8080` in browser.
+
+## Known Callsigns
+
+* W0HU-6
+* KE7BME-2
+* KE7BME-3
+* K2WVC-1
+* K2WVC-3
+* K2WVC-6
+* W0HU-5
+* KD6OAT-7
+* AC7BR-3
+* AC7BR-4
+* AC7BR-10
+* KD0J-7
 
 ## Troubleshooting
 
 - List processes using ports:
 	+ `sudo lsof -i :8080`
 	+ `kill <processID>`
-- 
 
+- building toolbox
+	+ https://github.com/vapor/toolbox/issues/371
+	+ so u can try to compile it using this command : swift build -c release --disable-sandbox
+and then move to the /usr/local/bin using this command : mv .build/release/vapor /usr/local/bin
 
 ## Related Projects
 
