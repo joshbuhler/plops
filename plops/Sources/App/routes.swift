@@ -117,7 +117,8 @@ func routes(_ app: Application) throws {
 //        let call = req.parameters.get("callsign") ?? "NOT FOUND"
         
         
-        let logFileURL = URL(fileURLWithPath: "/Users/josh/Projects/plops/jyn/Tests/jynTests/Resources/big.log")
+        //let logFileURL = URL(fileURLWithPath: "/Users/josh/Projects/plops/jyn/Tests/jynTests/Resources/big.log")
+        let logFileURL = URL(fileURLWithPath: "/home/kc6bsa/2022_log.log")
         guard let fileContents = try? String(contentsOf: logFileURL) else {
             return "Unable to load file"
         }
