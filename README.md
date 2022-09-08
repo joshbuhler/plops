@@ -12,9 +12,13 @@ A Vapor-powered application for runner operations at Pole-Line Pass for the Wasa
 
 ## Startup Checklist
 
+* Power up rig - Display must be on before Pi
 * Power up Pi
 * Connect LAN port to LAN1 of Luxul router
 * Verify that Pi has an IP of 192.168.0.133 using `ifconfig`
+* Set Pi clock
+	* `sudo date -s "Sept 9 20:14:11 2022"`
+	* `man date` for more options
 * Start PLOpS
 	* `cd ~/projects/plops/plops`
 	* `vapor run serve --hostname 192.168.0.133` OR `.build/release/run` (best results w/ first one)
