@@ -17,7 +17,7 @@ A Vapor-powered application for runner operations at Pole-Line Pass for the Wasa
 * Connect LAN port to LAN1 of Luxul router
 * Verify that Pi has an IP of 192.168.0.133 using `ifconfig`
 * Set Pi clock
-	* `sudo date -s "Sept 9 20:14:11 2022"`
+	* `sudo date -s "Sept 9 20:14 2022"`
 	* `man date` for more options
 * Start PLOpS
 	* `cd ~/projects/plops/plops`
@@ -27,7 +27,7 @@ A Vapor-powered application for runner operations at Pole-Line Pass for the Wasa
 * Bind ax.25 ports
 	* `sudo kissattach /dev/serial0 1 10.1.1.1`
 * Start axlisten
-	* `sudo axlisten -a`
+	* `sudo axlisten -acr`
 * Connect to Race System
 	* `axcall 1 AC7BR-4` (Pick an appropriate callsign from the list below.)
 	* `connect RACE`

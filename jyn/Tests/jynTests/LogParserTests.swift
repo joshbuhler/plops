@@ -83,6 +83,18 @@ class LogParserTests: XCTestCase {
         XCTAssertEqual(poleLine_actual_fourNames, poleLine_expected_fourNames)
     }
     
+    func test_findIncomingRunners_none() throws {
+        let sample = """
+>#312,   OK @ 2301MDT
+
+>Next 10 runners inbound to  Pole Line Pass as of 2304 hours
+
+>#175,   OK @ 2304MDT
+"""
+        let parser = LogParser()
+        XCTAssertNil(parser.findIncomingRunners(newLogs: sample))
+    }
+    
     func test_findReportedTemps() throws {
         let sample = """
 >> Pole Line Pass Temp reported 53 at 0104
