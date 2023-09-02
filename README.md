@@ -33,7 +33,7 @@ A Vapor-powered application for runner operations at Pole-Line Pass for the Wasa
 	* `connect RACE`
 	* `chkpt=l`
 	* Once connected, start log:
-		* `~o 2022_log.log`
+		* `~o 2022_log.log` - Regardless of year, filename will be 2022.
 	* Tail log in new tab to verify:
 		* `tail -f ~/2022_log.log`
 * Connect to system wifi "Pole Line Pass"
@@ -41,18 +41,12 @@ A Vapor-powered application for runner operations at Pole-Line Pass for the Wasa
 
 ## Known Callsigns
 
-* W0HU-6
-* KE7BME-2
-* KE7BME-3
-* K2WVC-1
-* K2WVC-3
-* K2WVC-6
-* W0HU-5
-* KD6OAT-7
-* AC7BR-3
-* AC7BR-4
-* AC7BR-10
-* KD0J-7
+|          |      |  |
+|--------------|-----------|------------|
+| W0HU-6 | KE7BME-2 | KE7BME-3 |
+| K2WVC-1 | K2WVC-3 | K2WVC-6 |
+| AC7BR-3 | AC7BR-4 | AC7BR-10 |
+| KD0J-7 |  |  |
 
 ## Troubleshooting
 
